@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    回報
+{% endblock %}
+
+{% block content %}
+{% include 'navbar.html' %}
+
+
+<form method="POST" action="{{ url_for('submit_report') }}">
+    <div class="form-group">
+        <div class="container">
+
+            <!-- 風險 -->
+            <div class="row">
+                <div class="col mt-5">
+                    <h2>風險</h2>
+                    <h6>評估該漏洞風險等級：無、低、中、高、嚴重風險</h6>
+                    <div class="btn-group-toggle" data-toggle="buttons">
+                        <label class="btn btn-outline-success">
+                            <input type="radio" name="severity" value="none" required>無
+                        </label>
+                        <label class="btn btn-outline-info">
+                            <input type="radio" name="severity" value="low" required>低
+                        </label>
+                        <label class="btn btn-outline-primary">
+                            <input type="radio" name="severity" value="medium" required>中
+                        </label>
+                        <label class="btn btn-outline-warning">
+                            <input type="radio" name="severity" value="high" required>高
+                        </label>
+                        <label class="btn btn-outline-danger">
+                            <input type="radio" name="severity" value="critical" required>嚴重
+                        </label>
+                        </div>
+                </div>
+            </div>     
+
+            <!-- 類型 -->
+            <div class="row">
+                <div class="col mt-5">
+                    <h2>類型</h2>
+                    <h6>評估該漏洞屬於哪種類型</h6>
+                    <!-- <label for="vulnerability-type">漏洞類型：</label> -->
+                    <select class="form-control" id="vulnerability-type" name="vulnerability_type">
+                        <option value="敏感信息外洩">敏感信息外洩</option>
+                        <option value="安全配置錯誤">安全配置錯誤</option>
+                        <option value="SQL注入攻擊">SQL注入攻擊</option>
+                        <option value="OS注入攻擊">OS注入攻擊</option>
+                        <option value="弱密碼暴力破解">弱密碼暴力破解</option>
+                        <option value="跨站腳本（XSS）攻擊">跨站腳本（XSS）攻擊</option>
+                        <option value="邏輯漏洞">邏輯漏洞</option>
+                        <option value="跨站請求偽造（CSRF）">跨站請求偽造（CSRF）</option>
+                        <option value="不安全的反序列化">不安全的反序列化</option>
+                        <option value="失效的身份認證與會話">失效的身份認證與會話</option>
+                        <option value="失效的訪問控制">失效的訪問控制</option>
+                        <option value="含有已知漏洞元件">含有已知漏洞元件</option>
+                        
+                    </select>
+            </div>
+            </div>
+
+            <!-- 敘述 -->
+            <div class="row">
+                <div class="col mt-5">
+                    <h2>敘述</h2>
+                    <h6>描述重現漏洞的方式、影響、螢幕截圖說明(截圖可直接貼上轉成線上圖網址)</h6>
+                        <!-- <label for="attack-description">攻擊手法：</label> -->
+                        <textarea class="form-control" id="attack-description" name="attack_description" rows="3" required></textarea>
+                        <button  type="submit" class="btn btn-primary mt-5">提交</button>
+                </div>
+            </div>
+
+
+            
+        </div>
+</form>
+
+<script>
+    var attackDescriptionInput = document.getElementById('attack-description');
+
+    attackDescriptionInput.addEventListener('paste', function(event) {
+        var clipboardItems = event.clipboardData.items;
+
+        for (var i = 0; i < clipboardItems.length; i++) {
+            var item = clipboardItems[i];
+
+            if (item.type.indexOf('image') !== -1) {
+                var blob = item.getAsFile();
+                var formData = new FormData();
+                formData.append('image', blob);
+
+                fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(function(response) {
+                    return response.json();
+                })
+                .then(function(data) {
+                    var imageUrl = data.image_url;
+
+                    var caretPos = attackDescriptionInput.selectionStart;
+                    var text = attackDescriptionInput.value;
+                    var newText = text.slice(0, caretPos) + imageUrl + text.slice(caretPos);
+                    attackDescriptionInput.value = newText;
+                })
+                .catch(function(error) {
+                    console.error('Image upload failed:', error);
+                });
+
+                break;
+            }
+        }
+    });
+</script>
+
+
+{% endblock %}

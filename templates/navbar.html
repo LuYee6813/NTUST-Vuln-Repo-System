@@ -1,0 +1,29 @@
+<nav class="navbar navbar-expand-md navbar-dark bg-dark">
+    <!-- <a class="navbar-brand" href="#">Logo</a> -->
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="/">首頁</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/report">漏洞回報</a>
+        </li>
+        <!-- <li class="nav-item">
+          <a class="nav-link" href="#">其他連結</a>
+        </li> -->
+      </ul>
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+            {% if session.logged_in %}
+            <a class="nav-link" href="{{ url_for('logout') }}">登出</a>
+            {% else %}
+            <a class="nav-link" href="{{ url_for('login') }}">登入</a>
+            {% endif %}
+          </li>
+      </ul>
+    </div>
+  </nav>
+  
